@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\bewatec.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\bad.png" />
+    <None Remove="Assets\bewatec.png" />
+    <None Remove="Assets\closewhite.png" />
+    <None Remove="Assets\failure.png" />
+    <None Remove="Assets\good.png" />
+    <None Remove="Assets\ok.png" />
+    <None Remove="Assets\plus.png" />
+    <None Remove="Assets\right.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\bewatec.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\bad.png" />
+    <Resource Include="Assets\bewatec.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\closewhite.png" />
+    <Resource Include="Assets\failure.png" />
+    <Resource Include="Assets\good.png" />
+    <Resource Include="Assets\ok.png" />
+    <Resource Include="Assets\right.png" />
+	  <Resource Include="Assets\plus.png" />
+  </ItemGroup>
+
+</Project>
