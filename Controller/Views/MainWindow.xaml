@@ -52,10 +52,17 @@
                         <Border Margin="25,15,25,0" Background="#F3F6F9" CornerRadius="20">
                             <StackPanel Margin="0,5">
                                 <Border Height="3"/>
-                                <ComboBox Width="160" Height="25" 
+                                <WrapPanel HorizontalAlignment="Center">
+                                    <ComboBox Width="90" Height="25" 
                                   ItemsSource="{Binding SupportedComs}" SelectedItem="{Binding SelectedCom}"
-                                  md:HintAssist.Hint="请选择设备连接的串口"
+                                  md:HintAssist.Hint="设备连接串口"
                                   MaxDropDownHeight="100" />
+                                    <Border Width="10"/>
+                                    <ComboBox Width="60" Height="25" 
+                                  ItemsSource="{Binding SupportedBaudrates}" SelectedItem="{Binding SelectedBaudrate}"
+                                  md:HintAssist.Hint="波特率"
+                                  MaxDropDownHeight="100" MaxWidth="60" />
+                                </WrapPanel>
                                 <Border Height="5"/>
                                 <WrapPanel Margin="15,5" HorizontalAlignment="Stretch" >
                                     <CheckBox Margin="10,0" IsChecked="{Binding IfWriteSn}" IsEnabled="True"/>
@@ -83,7 +90,7 @@
                             </StackPanel>
                         </Border>
                         <StackPanel Grid.Row="1">
-                            <WrapPanel Margin="45,5" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <WrapPanel Margin="45,5,45,2" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                 <CheckBox Margin="10,0" IsChecked="{Binding IfUseConfig}"/>
                                 <TextBlock Width="115" 
                                  Text="使用配置文件烧入" VerticalAlignment="Bottom" Margin="2"/>
@@ -91,7 +98,7 @@
                             <WrapPanel Margin="55,0" IsEnabled="{Binding IfUseConfig}">
                                 <TextBox Margin="2" 
                                          md:HintAssist.Hint="请选择配置文件..." Text="{Binding ConfigPath}" Width="100"/>
-                                <Button VerticalAlignment="Center" Grid.Column="1" Background="Transparent" BorderThickness="0" Style="{DynamicResource TextOnlyButton}"
+                                <Button VerticalAlignment="Bottom" Grid.Column="1" Background="Transparent" BorderThickness="0" Style="{DynamicResource TextOnlyButton}"
                                             Command="{Binding SelectCfgPathCommand}">
                                     <Button.Content>
                                         <TextBlock Height="15" Text="选择..." FontSize="11" TextDecorations="Underline" VerticalAlignment="Center"/>

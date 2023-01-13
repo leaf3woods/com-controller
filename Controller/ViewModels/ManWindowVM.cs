@@ -7,6 +7,10 @@ using System.Text.Json;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Controller.Models;
+using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
+using System.Text;
 
 namespace Controller.ViewModels
 {
@@ -27,6 +31,8 @@ namespace Controller.ViewModels
             _controller = new DeviceController();
             _controller.ReplyArrived += DealReply;
         }
+
+        private static readonly string _yshelp = "13help";
         private ObservableCollection<string> _supportedComs = new ObservableCollection<string>();
         public ObservableCollection<string> SupportedComs
         {
@@ -52,7 +58,17 @@ namespace Controller.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedCom"));
             }
         }
-
+        public ObservableCollection<int> SupportedBaudrates { get => new ObservableCollection<int> { 9600, 19200, 115200 }; }
+        private int? _selectedBaudrate;
+        public int? SelectedBaudrate
+        {
+            get => _selectedBaudrate;
+            set
+            {
+                _selectedBaudrate = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedBaudrate"));
+            }
+        }
         private bool _ifWriteSn = true;
         public bool IfWriteSn
         {
@@ -243,17 +259,45 @@ namespace Controller.ViewModels
             var window = o as System.Windows.Window;
             window?.Close();
         }
-        public void SelectCfgPath(object o)
+        public async void SelectCfgPath(object o)
         {
+            var defaultDirectory = Environment.CurrentDirectory;
+            if(!string.IsNullOrEmpty(ConfigPath))
+            {
+                if(ConfigPath.ToLower() == _yshelp)
+                {
+                    var mould = JsonSerializer.Serialize<ControlMessage>(new ControlMessage(Sn: null, Ip: null, Port: null, UserName: null, Password: null));
+                    JsonDocument jsonDocument = JsonDocument.Parse(mould);
+                    // 格式化输出
+                    string formatedMould = JsonSerializer.Serialize(jsonDocument, new JsonSerializerOptions()
+                    {
+                        // 整齐打印
+                        WriteIndented = true,
+                        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+                    });
+                    var buffer = Encoding.UTF8.GetBytes(formatedMould);
+                    var fullPath = Path.Combine(defaultDirectory, "mould.json");
+                    using(FileStream fsWrite = new FileStream(fullPath, FileMode.OpenOrCreate, FileAccess.Write))
+                    {
+                        fsWrite.Seek(0, SeekOrigin.Begin);
+                        await fsWrite.WriteAsync(buffer, 0, buffer.Length);
+                        await fsWrite.FlushAsync();
+                    }
+                }
+                else
+                    defaultDirectory = Directory.Exists(ConfigPath) ? ConfigPath : defaultDirectory; 
+            }
+
             var dialog = new OpenFileDialog()
             {
+                InitialDirectory = defaultDirectory,
                 Title = "选择数据源文件",
                 Filter = "配置文件(*.json,*.config)|*.json;*.config|所有文件|*.*",
                 FileName = string.Empty,
                 FilterIndex = 1,
                 Multiselect = false,
                 RestoreDirectory = true,
-                DefaultExt = "txt",
+                DefaultExt = "txt",               
             };
             if(dialog?.ShowDialog()??false)
                 ConfigPath = dialog.FileName;
@@ -275,13 +319,12 @@ namespace Controller.ViewModels
             try
             {
                 await ShowInfo("正在执行写入...",NotifyType.State);
-                _controller.Open(SelectedCom ?? throw new ArgumentException("no com was selected"), 115200);
+                _controller.Open(SelectedCom ?? throw new ArgumentException("no com was selected"),
+                    SelectedBaudrate ?? throw new ArgumentException("no baudrate was selected"));
                 await ShowInfo($"串口开启成功", NotifyType.State);
                 ControlMessage? controlMessage;
                 if (IfUseConfig)
-                {
                     controlMessage = JsonSerializer.Deserialize<ControlMessage>(ConfigPath ?? throw new ArgumentNullException("no config path was put in!"));
-                }
                 else
                 {
                     controlMessage = new ControlMessage(
