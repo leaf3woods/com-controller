@@ -32,7 +32,7 @@ namespace Controller.ViewModels
             _controller.ReplyArrived += DealReply;
         }
 
-        private static readonly string _yshelp = "13help";
+        private static readonly string _yshelp = "13";
         private ObservableCollection<string> _supportedComs = new ObservableCollection<string>();
         public ObservableCollection<string> SupportedComs
         {
@@ -287,7 +287,6 @@ namespace Controller.ViewModels
                 else
                     defaultDirectory = Directory.Exists(ConfigPath) ? ConfigPath : defaultDirectory; 
             }
-
             var dialog = new OpenFileDialog()
             {
                 InitialDirectory = defaultDirectory,
