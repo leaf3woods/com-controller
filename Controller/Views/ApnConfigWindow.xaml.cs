@@ -2,18 +2,18 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace Controller
+namespace Controller.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// ApnConfigWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ApnConfigWindow : Window
     {
-        private MainWindowVM _mainVm = new MainWindowVM();
+        private ApnConfigWindowVM _apnVM = new ApnConfigWindowVM();
 
-        public MainWindow()
+        public ApnConfigWindow()
         {
-            this.DataContext = _mainVm;
+            this.DataContext = _apnVM;
             InitializeComponent();
         }
 

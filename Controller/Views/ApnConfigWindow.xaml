@@ -1,0 +1,102 @@
+﻿<Window x:Class="Controller.Views.ApnConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Controller"
+        mc:Ignorable="d"
+        Title="ApnConfigWindow"  Height="370" Width="520"
+        AllowsTransparency="True" Background="Transparent" WindowStyle="None"
+        ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <Window.Effect>
+        <DropShadowEffect BlurRadius="10" Color="#FF858484" Direction="-45" ShadowDepth="3" />
+    </Window.Effect>
+    <Border Background="Transparent" Margin="10">
+        <Border Background="#FF37A0EA" CornerRadius="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="45" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="20" />
+                        <TextBlock Text="选项" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Width="380" MouseLeftButtonDown="WindowHeadDragMove" />
+                    </StackPanel>
+                    <Button Margin="0,0,10,0" Height="25" Width="25" Grid.Column="1" Background="Transparent" BorderThickness="0" Style="{DynamicResource menuButtonTemplate}"
+                            Command="{Binding QuitApnConfigCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor ,AncestorType={x:Type Window}}}">
+                        <Button.Content>
+                            <Image Source="/Assets/closewhite.png" Stretch="Uniform" Width="20" />
+                        </Button.Content>
+                    </Button>
+                </Grid>
+                <Border Grid.Row="2" Background="White" CornerRadius="15">
+                    <Grid>
+                        <Border Background="#F3F6F9" CornerRadius="10" Width="365" HorizontalAlignment="Right" Height="300" Margin="0,0,5,0" />
+                        <TabControl Grid.Column="0" Background="#FF37A0EA"
+                                    TabStripPlacement="Left" Margin="5">
+                            <TabItem Background="#FF37A0EA" Height="40" Width="120">
+                                <TabItem.Header>
+                                    <TextBlock Text="添加APN" Foreground="Black" FontSize="12" />
+                                </TabItem.Header>
+                                <Grid Margin="10,5,0,0">
+                                    <StackPanel>
+                                        <WrapPanel  Orientation="Horizontal">
+                                            <TextBox md:HintAssist.HelperText="默认: public.vpdn" Width="110"
+                                                md:HintAssist.Hint="APN接入点..." Text="{Binding ApnIn ,Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <Border Width="10" />
+                                            <TextBox md:HintAssist.HelperText="默认: @jxdermyy.vpdn.zj" Width="110"
+                                                md:HintAssist.Hint="APN配置..." Text="{Binding ApnExtension ,Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <Border Width="10" />
+                                            <TextBox md:HintAssist.HelperText="****"
+                                                md:HintAssist.Hint="APN密码..." Text="{Binding ApnPassword ,Mode=TwoWay ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <Border Width="5" />
+                                        </WrapPanel>
+                                        <Border Height="20">
+                                        </Border>
+                                        <WrapPanel>
+                                            <TextBox
+                                                md:HintAssist.Hint="从目标excel文件导入APN卡列表 ..." Text="{Binding ApnConfigPath}" Width="200" />
+                                            <Border Width="20" />
+                                            <Button VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Style="{DynamicResource singleButtonTemplate}"
+                                                    Command="{Binding LoadExcelCommand}" md:HintAssist.Hint="请输入设备名称..."
+                                                    CommandParameter="{Binding RelativeSource = {RelativeSource Self}}">
+                                                <Button.Content>
+                                                    <Border BorderThickness="3" Background="#e7f3fc" Height="25" Width="25" CornerRadius="5">
+                                                        <Image Stretch="Uniform" Source="/Assets/plus.png" />
+                                                    </Border>
+                                                </Button.Content>
+                                            </Button>
+                                        </WrapPanel>
+                                        <DataGrid Margin="0,5" Width="350" HorizontalAlignment="Left" Height="190" ItemsSource="{Binding ApnInfos, Source={x:Static local:Common.Instance}}" IsReadOnly="True" AutoGenerateColumns="False" FontSize="10">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="用户名称" Binding="{Binding Name}" />
+                                                <DataGridTextColumn Header="用户号码" Binding="{Binding UserId}" />
+                                                <DataGridTextColumn Header="L_IMSI" Binding="{Binding LIMSI}" />
+                                                <DataGridTextColumn Header="ICCID" Binding="{Binding ICCID}" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                        <Button Margin="10,2" Background="#FF37A0EA" HorizontalAlignment="Right" Height="20" Width="60" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"
+                                                Command="{Binding SaveApnSettingsCommand}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor ,AncestorType={x:Type Window}}}">
+                                            <Button.Content>
+                                                <TextBlock Grid.Column="1" Text="完成" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" FontSize="11" />
+                                            </Button.Content>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Border>
+</Window>

@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace Controller.ViewModels
 {
-    internal class RelayCommand : ICommand
+    public class RelayCommand : ICommand
     {
         public event EventHandler? CanExecuteChanged;
 

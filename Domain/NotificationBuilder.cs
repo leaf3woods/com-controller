@@ -1,5 +1,4 @@
-﻿
-namespace Domain
+﻿namespace Domain
 {
     public class NotificationBuilder
     {
@@ -13,11 +12,13 @@ namespace Domain
             _header = header;
             return this;
         }
+
         public NotificationBuilder WithTime(DateTime time)
         {
             _time = time.ToShortTimeString();
             return this;
         }
+
         public NotificationBuilder WithType(NotifyType type)
         {
             _type = type switch
