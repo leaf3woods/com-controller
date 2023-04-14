@@ -2,7 +2,7 @@
 
 namespace Domain.Repos.IRepositories
 {
-    public interface IBaseRepo<TReadDto, TUpdateDto, TCreateDto> 
+    public interface IBaseRepo<TReadDto, TUpdateDto, TCreateDto>
         where TReadDto : ReadableDto, new()
         where TUpdateDto : UpdateableDto, new()
         where TCreateDto : CreateableDto, new()

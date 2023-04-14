@@ -21,6 +21,7 @@ namespace Controller.ViewModels
     public class MainWindowVM : INotifyPropertyChanged
     {
         #region command binding
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public RelayCommand QuitAppCommand { get; set; } = null!;
@@ -40,7 +41,7 @@ namespace Controller.ViewModels
             _controller.ReplyArrived += DealReply;
         }
 
-        #endregion
+        #endregion command binding
 
         public IDeviceRepo DeviceRepo { get; set; } = null!;
 
@@ -325,9 +326,10 @@ namespace Controller.ViewModels
             }
         }
 
-        #endregion
+        #endregion property binding
 
         #region command method
+
         public void QuitApp(object o)
         {
             var window = o as System.Windows.Window;
@@ -395,16 +397,6 @@ namespace Controller.ViewModels
         {
             try
             {
-                await AddOperationRecord(new DeviceCreateDto()
-                {
-                    Uri = SerialNumber ?? "",
-                    Limsi = ""
-                }, new OperationLogCreateDto
-                {
-                    OperationTime = DateTime.Now,
-                    FlashInState = true,
-                });
-
                 await ShowInfo("正在执行写入...", NotifyType.State);
                 _controller.Open(SelectedCom ?? throw new ArgumentException("no com was selected"),
                     SelectedBaudrate ?? throw new ArgumentException("no baudrate was selected"));
@@ -460,12 +452,13 @@ namespace Controller.ViewModels
             ApnConfigWindow.Activate();
         }
 
-        #endregion
+        #endregion command method
 
         #region repo method
+
         private async Task AddOperationRecord(DeviceCreateDto deviceDto, OperationLogCreateDto operationDto)
         {
-            var device = await DeviceRepo.GetViaLimsi(deviceDto.Limsi);
+            var device = await DeviceRepo.FindViaLimsi(deviceDto.Limsi);
             if (device is null)
             {
                 var afterCreate = await DeviceRepo.Create(deviceDto);
@@ -473,8 +466,8 @@ namespace Controller.ViewModels
             }
             else
             {
-                if(!string.IsNullOrEmpty(deviceDto.Uri))
-                    await DeviceRepo.Update(new DeviceUpdateDto() { Uri = deviceDto.Uri, Id = device.Id});
+                if (!string.IsNullOrEmpty(deviceDto.Uri))
+                    await DeviceRepo.Update(new DeviceUpdateDto() { Uri = deviceDto.Uri, Id = device.Id });
                 var lastLog = (await OperationLogRepo.FindViaLimsi(deviceDto.Limsi)).MaxBy(o => o.OperationTime);
                 operationDto.DeviceId = device.Id;
                 var time = lastLog is null ? "null" : DateOnly.FromDateTime(lastLog.OperationTime).ToString();
@@ -482,7 +475,8 @@ namespace Controller.ViewModels
             }
             await OperationLogRepo.Create(operationDto);
         }
-        #endregion
+
+        #endregion repo method
 
         public async void DealReply(string reply)
         {

@@ -13,7 +13,7 @@
         public DateTime OperationTime { get; set; }
 
         /// <summary>
-        ///     上次烧入状态
+        ///     烧入状态
         /// </summary>
         public bool? FlashInState { get; set; } = null!;
 
@@ -36,7 +36,7 @@
         public DateTime OperationTime { get; set; }
 
         /// <summary>
-        ///     上次烧入状态
+        ///     烧入状态
         /// </summary>
         public bool? FlashInState { get; set; } = null!;
 

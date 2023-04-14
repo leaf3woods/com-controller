@@ -9,6 +9,8 @@ namespace Controller.ViewModels
 {
     public class ApnConfigWindowVM : INotifyPropertyChanged
     {
+        #region command binding
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public RelayCommand LoadExcelCommand { get; set; } = null!;
@@ -21,6 +23,10 @@ namespace Controller.ViewModels
             SaveApnSettingsCommand = new RelayCommand() { ExecuteAction = SaveApnSettings };
             QuitApnConfigCommand = new RelayCommand() { ExecuteAction = QuitApnConfig };
         }
+
+        #endregion command binding
+
+        #region property binding
 
         private string? _apnIn;
 
@@ -70,6 +76,10 @@ namespace Controller.ViewModels
             }
         }
 
+        #endregion property binding
+
+        #region command method
+
         public void LoadExcel(object o)
         {
             var dialog = new OpenFileDialog()
@@ -104,5 +114,7 @@ namespace Controller.ViewModels
 
         public void QuitApnConfig(object o)
             => (o as System.Windows.Window)?.Close();
+
+        #endregion command method
     }
 }

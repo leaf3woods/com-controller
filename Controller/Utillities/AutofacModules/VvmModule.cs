@@ -8,7 +8,6 @@ namespace Controller.Utillities.AutofacModules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            var assembles = Assembly.GetExecutingAssembly().GetTypes().Where(a => a.Name.EndsWith("VM") || a.Name.EndsWith("Window"));
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                 .Where(a => a.Name.EndsWith("VM") || a.Name.EndsWith("Window"))
                 .SingleInstance().AsSelf().PropertiesAutowired();

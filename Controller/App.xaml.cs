@@ -22,6 +22,7 @@ namespace Controller
             var host = builder.ConfigureContainer<ContainerBuilder>(options =>
                 options.RegisterAssemblyModules(Assembly.GetExecutingAssembly(), Assembly.Load(nameof(Domain))))
                 .Build();
+            //  若要注入main window, 需要在app.xaml中删除startup uri, 由host通过依赖注入获取窗口并启动
             var mainWindow = host.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
 

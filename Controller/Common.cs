@@ -31,7 +31,7 @@ namespace Controller
             }
         }
 
-        public ObservableCollection<ApnInfo> ApnInfos { get; set; } = new ObservableCollection<ApnInfo>();
+        public ObservableCollection<ApnExcelField> ApnInfos { get; set; } = new ObservableCollection<ApnExcelField>();
 
         private bool _ifApnConfigured = false;
 

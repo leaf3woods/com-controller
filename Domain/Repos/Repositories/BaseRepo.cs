@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Repos.Repositories
 {
-    public abstract class BaseRepo<TEntity, TReadDto, TUpdateDto, TCreateDto> : IBaseRepo< TReadDto, TUpdateDto, TCreateDto>
+    public abstract class BaseRepo<TEntity, TReadDto, TUpdateDto, TCreateDto> : IBaseRepo<TReadDto, TUpdateDto, TCreateDto>
         where TReadDto : ReadableDto, new()
         where TUpdateDto : UpdateableDto, new()
         where TCreateDto : CreateableDto, new()

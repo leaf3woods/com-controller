@@ -10,7 +10,6 @@ namespace Controller.Utillities.AutofacModules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            var assembles = Assembly.Load(nameof(Domain)).GetTypes().Where(a => a.Name.Contains("Repo"));
             builder.RegisterAssemblyTypes(Assembly.Load(nameof(Domain)))
                 .Where(a => a.Name.Contains("Repo"))
                 .AsImplementedInterfaces().PropertiesAutowired();

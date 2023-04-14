@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Repos
 {
+    /// <summary>
+    ///     数据库上下文, 由依赖注入组件生成
+    /// </summary>
     public class CtlDbContext : DbContext
     {
         /// <summary>

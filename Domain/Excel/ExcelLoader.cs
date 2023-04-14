@@ -6,7 +6,7 @@ namespace Domain.Excel
 {
     public class ExcelLoader
     {
-        public static IEnumerable<ApnInfo> LoadCardInfoFromExcel(Stream fileStream, string extension, string path)
+        public static IEnumerable<ApnExcelField> LoadCardInfoFromExcel(Stream fileStream, string extension, string path)
         {
             var items = path.Split(':', 2);
             var sheetName = items[0];
@@ -52,7 +52,7 @@ namespace Domain.Excel
             {
                 var raw = raws.Current as IRow;
                 if (raw!.RowNum == 0 || raw.Cells.Count < 2) continue;
-                yield return new ApnInfo()
+                yield return new ApnExcelField()
                 {
                     Name = raw!.Cells[index.Item1].StringCellValue,
                     UserId = raw!.Cells[index.Item2].StringCellValue,

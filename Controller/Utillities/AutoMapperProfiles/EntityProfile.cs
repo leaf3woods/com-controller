@@ -9,18 +9,22 @@ namespace Controller.Utillities.AutoMapperProfiles
         public EntityProfile()
         {
             #region device entities
+
             CreateMap<Device, DeviceReadDto>();
             CreateMap<DeviceCreateDto, Device>();
             CreateMap<DeviceUpdateDto, Device>()
                 .ForAllMembers(opts => opts.Condition(src => src is not null));
-            #endregion
+
+            #endregion device entities
 
             #region operationLog entities
+
             CreateMap<OperationLog, OperationLogReadDto>();
             CreateMap<OperationLogCreateDto, OperationLog>();
             CreateMap<OperationLogUpdateDto, OperationLog>()
                 .ForAllMembers(opts => opts.Condition(src => src is not null));
-            #endregion
+
+            #endregion operationLog entities
         }
     }
 }
