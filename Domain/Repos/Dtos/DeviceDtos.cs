@@ -1,4 +1,6 @@
-﻿namespace Domain.Repos.Dtos
+﻿using Domain.Repos.Model;
+
+namespace Domain.Repos.Dtos
 {
     public class DeviceReadDto : ReadableDto
     {
@@ -16,6 +18,11 @@
         ///     设备Limsi码
         /// </summary>
         public string Limsi { get; set; } = null!;
+
+        /// <summary>
+        ///     设置
+        /// </summary>
+        public Setting Settings { get; set; } = null!;
     }
 
     public class DeviceCreateDto : CreateableDto
@@ -29,6 +36,11 @@
         ///     设备Limsi码
         /// </summary>
         public string Limsi { get; set; } = null!;
+
+        /// <summary>
+        ///     设置
+        /// </summary>
+        public Setting Settings { get; set; } = null!;
     }
 
     public class DeviceUpdateDto : UpdateableDto
@@ -47,5 +59,10 @@
         ///     设备Limsi码
         /// </summary>
         public string? Limsi { get; set; } = null!;
+
+        /// <summary>
+        ///     设置
+        /// </summary>
+        public Setting? Settings { get; set; }
     }
 }

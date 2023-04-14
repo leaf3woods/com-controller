@@ -3,6 +3,7 @@ using System;
 using Domain.Repos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(CtlDbContext))]
-    partial class CtlDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230414072717_Add_Owned_Setting")]
+    partial class Add_Owned_Setting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
@@ -25,11 +28,13 @@ namespace Domain.Migrations
 
                     b.Property<string>("Limsi")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("limsi");
 
                     b.Property<string>("Uri")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("uri");
 
                     b.HasKey("Id");
 
@@ -39,7 +44,7 @@ namespace Domain.Migrations
                     b.HasIndex("Uri")
                         .IsUnique();
 
-                    b.ToTable("Devices");
+                    b.ToTable("device_info");
                 });
 
             modelBuilder.Entity("Domain.Repos.Model.OperationLog", b =>
@@ -52,16 +57,18 @@ namespace Domain.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool?>("FlashInState")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("flash_in_state");
 
                     b.Property<DateTime>("OperationTime")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("operation_time");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
 
-                    b.ToTable("OperationLogs");
+                    b.ToTable("operation_log");
                 });
 
             modelBuilder.Entity("Domain.Repos.Model.Device", b =>
@@ -73,35 +80,42 @@ namespace Domain.Migrations
 
                             b1.Property<string>("AccessPoint")
                                 .IsRequired()
-                                .HasColumnType("TEXT");
+                                .HasColumnType("TEXT")
+                                .HasColumnName("access_point");
 
                             b1.Property<string>("ApPassword")
                                 .IsRequired()
-                                .HasColumnType("TEXT");
-
-                            b1.Property<string>("ApUserId")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .HasColumnType("TEXT")
+                                .HasColumnName("ap_password");
 
                             b1.Property<string>("MqttPassword")
                                 .IsRequired()
-                                .HasColumnType("TEXT");
+                                .HasColumnType("TEXT")
+                                .HasColumnName("mqtt_password");
 
                             b1.Property<string>("MqttPort")
                                 .IsRequired()
-                                .HasColumnType("TEXT");
+                                .HasColumnType("TEXT")
+                                .HasColumnName("mqtt_port");
 
                             b1.Property<string>("MqttServer")
                                 .IsRequired()
-                                .HasColumnType("TEXT");
+                                .HasColumnType("TEXT")
+                                .HasColumnName("mqtt_server");
 
                             b1.Property<string>("MqttUserName")
                                 .IsRequired()
-                                .HasColumnType("TEXT");
+                                .HasColumnType("TEXT")
+                                .HasColumnName("mqtt_UserName");
+
+                            b1.Property<string>("UserId")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("user_id");
 
                             b1.HasKey("Id");
 
-                            b1.ToTable("Devices");
+                            b1.ToTable("device_info");
 
                             b1.WithOwner()
                                 .HasForeignKey("Id");

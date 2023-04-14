@@ -13,7 +13,7 @@ namespace Controller.Utillities.AutoMapperProfiles
             CreateMap<Device, DeviceReadDto>();
             CreateMap<DeviceCreateDto, Device>();
             CreateMap<DeviceUpdateDto, Device>()
-                .ForAllMembers(opts => opts.Condition(src => src is not null));
+                .ForAllMembers(opts => opts.Condition((_, _, src) => src is not null));
 
             #endregion device entities
 
@@ -22,7 +22,7 @@ namespace Controller.Utillities.AutoMapperProfiles
             CreateMap<OperationLog, OperationLogReadDto>();
             CreateMap<OperationLogCreateDto, OperationLog>();
             CreateMap<OperationLogUpdateDto, OperationLog>()
-                .ForAllMembers(opts => opts.Condition(src => src is not null));
+                .ForAllMembers(opts => opts.Condition((_, _, src) => src is not null));
 
             #endregion operationLog entities
         }

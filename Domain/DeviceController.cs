@@ -27,14 +27,14 @@ namespace Domain
         public async Task SendMsg(ControlMessage msg)
         {
             if (msg.Sn is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.SerialNumber, msg.Sn));
-            if (msg.Ip is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ServerIp, msg.Ip));
-            if (msg.Port is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ServerPort, msg.Port.ToString() ?? throw new ArgumentNullException("wrong port type")));
-            if (msg.Username is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.Username, msg.Username));
-            if (msg.Password is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.Password, msg.Password));
-            if (msg.ApnIn is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnIn, msg.ApnIn));
-            if (msg.ApnUsername is not null)
-                await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnUsername, msg.ApnUsername));
-            if (msg.ApnPassword is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnPassword, msg.ApnPassword));
+            if (msg.MqttServer is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ServerIp, msg.MqttServer));
+            if (msg.MqttPort is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ServerPort, msg.MqttPort.ToString() ?? throw new ArgumentNullException("wrong port type")));
+            if (msg.MqttUserName is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.Username, msg.MqttUserName));
+            if (msg.MqttPassword is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.Password, msg.MqttPassword));
+            if (msg.AccessPoint is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnIn, msg.AccessPoint));
+            if (msg.ApUserId is not null)
+                await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnUsername, msg.ApUserId));
+            if (msg.ApPassword is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnPassword, msg.ApPassword));
         }
 
         public async Task Set(MessageType type)
@@ -63,6 +63,6 @@ namespace Domain
         }
     }
 
-    public record class ControlMessage(string? Sn, string? Ip, int? Port, string? Username,
-        string? Password, string? ApnIn, string? ApnUsername, string? ApnPassword);
+    public record class ControlMessage(string? Sn, string? MqttServer, int? MqttPort, string? MqttUserName,
+        string? MqttPassword, string? AccessPoint, string? ApUserId, string? ApPassword);
 }

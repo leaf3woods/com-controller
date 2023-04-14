@@ -1,24 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Repos.Model
 {
-    [Table("device_info")]
     [Index(nameof(Uri), IsUnique = true), Index(nameof(Limsi), IsUnique = true)]
     public class Device : BaseEntity
     {
         /// <summary>
         ///     设备Uri
         /// </summary>
-        [Column("uri"), Required]
+        [Required]
         public string Uri { get; set; } = null!;
 
         /// <summary>
         ///     设备Limsi码
         /// </summary>
-        [Column("limsi"), Required]
+        [Required]
         public string Limsi { get; set; } = null!;
+
+        /// <summary>
+        ///     设备设置
+        /// </summary>
+        public Setting Settings { get; set; } = null!;
 
         /// <summary>
         ///     设备操作记录

@@ -1,9 +1,11 @@
-﻿using Controller.Models;
+﻿using AutoMapper;
+using Controller.Models;
 using Controller.Views;
 using Domain;
 using Domain.Com;
 using Domain.Repos.Dtos;
 using Domain.Repos.IRepositories;
+using Domain.Repos.Model;
 using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
@@ -47,7 +49,7 @@ namespace Controller.ViewModels
 
         private DeviceController _controller = null!;
         public IOperationLogRepo OperationLogRepo { get; set; } = null!;
-
+        public IMapper Mapper { get; set; } = null!;
         public ApnConfigWindow ApnConfigWindow { get; set; } = null!;
 
         private static readonly string _yshelp = "13";
@@ -343,8 +345,8 @@ namespace Controller.ViewModels
             {
                 if (FlashConfigPath.ToLower() == _yshelp)
                 {
-                    var mould = JsonSerializer.Serialize<ControlMessage>(new ControlMessage(Sn: null, Ip: null, Port: null, Username: null, Password: null,
-                        ApnIn: null, ApnUsername: null, ApnPassword: null));
+                    var mould = JsonSerializer.Serialize<ControlMessage>(new ControlMessage(Sn: null, MqttServer: null, MqttPort: null, MqttUserName: null, MqttPassword: null,
+                        AccessPoint: null, ApUserId: null, ApPassword: null));
                     JsonDocument jsonDocument = JsonDocument.Parse(mould);
                     // 格式化输出
                     string formatedMould = JsonSerializer.Serialize(jsonDocument, new JsonSerializerOptions()
@@ -404,10 +406,12 @@ namespace Controller.ViewModels
                 ControlMessage? controlMessage;
                 var limsi = await _controller.GetLIMSI();
                 var username = Common.Instance.GetUserIdViaLIMSI(limsi);
+                var lastControl = Mapper.Map<ControlMessage>((await DeviceRepo.FindViaLimsi(limsi))?.Settings);
                 if (IfUseConfig)
                     controlMessage = JsonSerializer.Deserialize<ControlMessage>(FlashConfigPath ?? throw new ArgumentNullException("no config path was put in!"));
                 else
                 {
+
                     controlMessage = new ControlMessage(
                         (string.IsNullOrEmpty(SerialNumber) || !IfWriteSn) ? null : SerialNumber,
                         (string.IsNullOrEmpty(MqttServer) || !IfWriteHost) ? null : MqttServer,
@@ -418,20 +422,22 @@ namespace Controller.ViewModels
                         (string.IsNullOrEmpty(Common.Instance.ApnSettings?.UsernameExtension) || !IfWriteApn) ? null : username + Common.Instance.ApnSettings?.UsernameExtension,
                         (string.IsNullOrEmpty(Common.Instance.ApnSettings?.ApPassword) || !IfWriteApn) ? null : Common.Instance.ApnSettings?.ApPassword
                         );
+                    lastControl = Mapper.Map<ControlMessage>(controlMessage);
                 }
-                if (controlMessage != null)
+                if (lastControl != null)
                 {
                     await _controller.Set(MessageType.Reset);
                     await ShowInfo($"正在等待复位完成...", NotifyType.Instant);
                     await Task.Delay(5 * 1000);
                     await ShowInfo($"复位完成,烧入配置...", NotifyType.State);
-                    await _controller.SendMsg(controlMessage);
+                    await _controller.SendMsg(lastControl);
                     await _controller.Set(MessageType.Save);
                     await ShowInfo($"烧入完成！", NotifyType.State);
                     await AddOperationRecord(new DeviceCreateDto()
                     {
                         Uri = SerialNumber ?? "",
-                        Limsi = limsi
+                        Limsi = limsi,
+                        Settings = Mapper.Map<Setting>(lastControl)
                     }, new OperationLogCreateDto
                     {
                         OperationTime = DateTime.Now,
@@ -467,7 +473,7 @@ namespace Controller.ViewModels
             else
             {
                 if (!string.IsNullOrEmpty(deviceDto.Uri))
-                    await DeviceRepo.Update(new DeviceUpdateDto() { Uri = deviceDto.Uri, Id = device.Id });
+                    await DeviceRepo.Update(new DeviceUpdateDto() { Uri = deviceDto.Uri, Id = device.Id, Settings = deviceDto.Settings});
                 var lastLog = (await OperationLogRepo.FindViaLimsi(deviceDto.Limsi)).MaxBy(o => o.OperationTime);
                 operationDto.DeviceId = device.Id;
                 var time = lastLog is null ? "null" : DateOnly.FromDateTime(lastLog.OperationTime).ToString();

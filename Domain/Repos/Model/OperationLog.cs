@@ -1,20 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Repos.Model
 {
-    [Table("operation_log")]
     public class OperationLog : BaseEntity
     {
         /// <summary>
         ///     烧入时间
         /// </summary>
-        [Column("operation_time")]
+        [Required]
         public DateTime OperationTime { get; set; }
 
         /// <summary>
         ///     上次烧入状态
         /// </summary>
-        [Column("flash_in_state")]
         public bool? FlashInState { get; set; } = null!;
 
         /// <summary>
