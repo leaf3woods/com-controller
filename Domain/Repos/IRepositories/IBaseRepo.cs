@@ -1,18 +1,21 @@
-﻿using Domain.Repos.Model;
+﻿using Domain.Repos.Dtos;
 
 namespace Domain.Repos.IRepositories
 {
-    public interface IBaseRepo<TEntity> where TEntity : BaseEntity
+    public interface IBaseRepo<TReadDto, TUpdateDto, TCreateDto> 
+        where TReadDto : ReadableDto, new()
+        where TUpdateDto : UpdateableDto, new()
+        where TCreateDto : CreateableDto, new()
     {
-        public Task<TEntity?> Get(Guid id);
+        public Task<TReadDto?> Get(Guid id);
 
-        public Task<IEnumerable<TEntity>> GetAll();
+        public Task<IEnumerable<TReadDto>> GetAll();
 
-        public Task<int> Create(TEntity entity);
+        public Task<TReadDto?> Create(TCreateDto dto);
 
-        public Task<int> CreateRange(IEnumerable<TEntity> entities);
+        public Task<int> CreateRange(IEnumerable<TCreateDto> dtos);
 
-        public Task<int> Delete(Guid id);
+        public Task<TReadDto?> Delete(Guid id);
 
         public Task<int> DeleteRange(IEnumerable<Guid> ids);
     }

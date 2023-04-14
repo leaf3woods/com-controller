@@ -9,11 +9,12 @@ namespace Controller.Views
     /// </summary>
     public partial class ApnConfigWindow : Window
     {
-        private ApnConfigWindowVM _apnVM = new ApnConfigWindowVM();
+        public ApnConfigWindowVM ApnVM { get; set; } = null!;
 
-        public ApnConfigWindow()
+        public ApnConfigWindow(ApnConfigWindowVM apnVM)
         {
-            this.DataContext = _apnVM;
+            ApnVM = apnVM;
+            this.DataContext = ApnVM;
             InitializeComponent();
         }
 

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Controller", "Controller\Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{8457ED68-40FF-4FE9-B62F-38C94872F998}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "MySetup", "MySetup\MySetup.vdproj", "{0D4AA41C-36F8-4EB3-9FFE-787271FF30AC}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ControllerSetup", "MySetup\MySetup.vdproj", "{0D4AA41C-36F8-4EB3-9FFE-787271FF30AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

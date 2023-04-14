@@ -33,7 +33,7 @@ namespace Domain
             if (msg.Password is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.Password, msg.Password));
             if (msg.ApnIn is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnIn, msg.ApnIn));
             if (msg.ApnUsername is not null)
-                await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnUsername, await GetLIMSI() + msg.ApnUsername));
+                await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnUsername, msg.ApnUsername));
             if (msg.ApnPassword is not null) await _comHelper.Write(ProxyWrapper.WithPayload(MessageType.ApnPassword, msg.ApnPassword));
         }
 

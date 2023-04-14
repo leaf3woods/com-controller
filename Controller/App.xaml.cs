@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Controller.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
@@ -17,15 +16,13 @@ namespace Controller
         {
             #region dependencyInjection
 
-            ServiceCollection services = new ServiceCollection();
-            services.AddSingleton<MainWindow>();
-            services.AddSingleton<MainWindowVM>();
-            var serviceProvider = services.BuildServiceProvider();
-            var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
             var builder = Host.CreateDefaultBuilder(e.Args).
-                UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.ConfigureContainer<ContainerBuilder>(options =>
-                options.RegisterAssemblyModules(Assembly.GetExecutingAssembly()));
+                UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .ConfigureServices(service => service.AddAutoMapper(Assembly.GetExecutingAssembly(), Assembly.Load(nameof(Domain))));
+            var host = builder.ConfigureContainer<ContainerBuilder>(options =>
+                options.RegisterAssemblyModules(Assembly.GetExecutingAssembly(), Assembly.Load(nameof(Domain))))
+                .Build();
+            var mainWindow = host.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
 
             #endregion dependencyInjection

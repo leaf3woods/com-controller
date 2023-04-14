@@ -19,11 +19,16 @@ namespace Domain.Repos
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(@"Data Source=controller.db; Mode=ReadWrite;");
+            optionsBuilder.UseSqlite(@"Data Source=controller.db");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //modelBuilder.Entity<OperationLog>().HasData(new OperationLog()
+            //{
+            //    OperationTime = DateTime.UnixEpoch,
+            //    FlashInState = null,
+            //});
         }
     }
 }

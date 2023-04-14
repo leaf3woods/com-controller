@@ -9,11 +9,12 @@ namespace Controller
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindowVM _mainVm = new MainWindowVM();
+        public MainWindowVM MainVm { get; set; } = null!;
 
-        public MainWindow()
+        public MainWindow(MainWindowVM mainVm)
         {
-            this.DataContext = _mainVm;
+            MainVm = mainVm;
+            this.DataContext = MainVm;
             InitializeComponent();
         }
 

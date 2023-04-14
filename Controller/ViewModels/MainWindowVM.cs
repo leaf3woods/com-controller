@@ -2,11 +2,14 @@
 using Controller.Views;
 using Domain;
 using Domain.Com;
+using Domain.Repos.Dtos;
+using Domain.Repos.IRepositories;
 using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -15,10 +18,9 @@ using System.Threading.Tasks;
 
 namespace Controller.ViewModels
 {
-    internal class MainWindowVM : INotifyPropertyChanged
+    public class MainWindowVM : INotifyPropertyChanged
     {
-        # region 属性绑定
-
+        #region command binding
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public RelayCommand QuitAppCommand { get; set; } = null!;
@@ -38,7 +40,19 @@ namespace Controller.ViewModels
             _controller.ReplyArrived += DealReply;
         }
 
+        #endregion
+
+        public IDeviceRepo DeviceRepo { get; set; } = null!;
+
+        private DeviceController _controller = null!;
+        public IOperationLogRepo OperationLogRepo { get; set; } = null!;
+
+        public ApnConfigWindow ApnConfigWindow { get; set; } = null!;
+
         private static readonly string _yshelp = "13";
+
+        #region property binding
+
         private ObservableCollection<string> _supportedComs = new ObservableCollection<string>();
 
         public ObservableCollection<string> SupportedComs
@@ -69,6 +83,7 @@ namespace Controller.ViewModels
         }
 
         public ObservableCollection<int> SupportedBaudrates { get => new ObservableCollection<int> { 9600, 19200, 115200 }; }
+
         private int? _selectedBaudrate;
 
         public int? SelectedBaudrate
@@ -312,8 +327,7 @@ namespace Controller.ViewModels
 
         #endregion
 
-        private DeviceController _controller = null!;
-
+        #region command method
         public void QuitApp(object o)
         {
             var window = o as System.Windows.Window;
@@ -381,11 +395,23 @@ namespace Controller.ViewModels
         {
             try
             {
+                await AddOperationRecord(new DeviceCreateDto()
+                {
+                    Uri = SerialNumber ?? "",
+                    Limsi = ""
+                }, new OperationLogCreateDto
+                {
+                    OperationTime = DateTime.Now,
+                    FlashInState = true,
+                });
+
                 await ShowInfo("正在执行写入...", NotifyType.State);
                 _controller.Open(SelectedCom ?? throw new ArgumentException("no com was selected"),
                     SelectedBaudrate ?? throw new ArgumentException("no baudrate was selected"));
                 await ShowInfo($"串口开启成功", NotifyType.State);
                 ControlMessage? controlMessage;
+                var limsi = await _controller.GetLIMSI();
+                var username = Common.Instance.GetUserIdViaLIMSI(limsi);
                 if (IfUseConfig)
                     controlMessage = JsonSerializer.Deserialize<ControlMessage>(FlashConfigPath ?? throw new ArgumentNullException("no config path was put in!"));
                 else
@@ -397,7 +423,7 @@ namespace Controller.ViewModels
                         (string.IsNullOrEmpty(MqttUserName) || !IfWriteUserName) ? null : MqttUserName,
                         (string.IsNullOrEmpty(MqttPassword) || !IfWritePassword) ? null : MqttPassword,
                         (string.IsNullOrEmpty(Common.Instance.ApnSettings?.AccessPoint) || !IfWriteApn) ? null : Common.Instance.ApnSettings?.AccessPoint,
-                        (string.IsNullOrEmpty(Common.Instance.ApnSettings?.UsernameExtension) || !IfWriteApn) ? null : Common.Instance.ApnSettings?.UsernameExtension,
+                        (string.IsNullOrEmpty(Common.Instance.ApnSettings?.UsernameExtension) || !IfWriteApn) ? null : username + Common.Instance.ApnSettings?.UsernameExtension,
                         (string.IsNullOrEmpty(Common.Instance.ApnSettings?.ApPassword) || !IfWriteApn) ? null : Common.Instance.ApnSettings?.ApPassword
                         );
                 }
@@ -406,9 +432,19 @@ namespace Controller.ViewModels
                     await _controller.Set(MessageType.Reset);
                     await ShowInfo($"正在等待复位完成...", NotifyType.Instant);
                     await Task.Delay(5 * 1000);
-                    await ShowInfo($"复位已完成...", NotifyType.State);
+                    await ShowInfo($"复位完成,烧入配置...", NotifyType.State);
                     await _controller.SendMsg(controlMessage);
                     await _controller.Set(MessageType.Save);
+                    await ShowInfo($"烧入完成！", NotifyType.State);
+                    await AddOperationRecord(new DeviceCreateDto()
+                    {
+                        Uri = SerialNumber ?? "",
+                        Limsi = limsi
+                    }, new OperationLogCreateDto
+                    {
+                        OperationTime = DateTime.Now,
+                        FlashInState = true,
+                    });
                 }
             }
             catch (Exception ex)
@@ -420,10 +456,33 @@ namespace Controller.ViewModels
         public void ApnConfig(object o)
         {
             Common.Instance.IfApnConfigured = false;
-            var apnConfig = new ApnConfigWindow();
-            apnConfig.ShowDialog();
-            apnConfig.Activate();
+            ApnConfigWindow.ShowDialog();
+            ApnConfigWindow.Activate();
         }
+
+        #endregion
+
+        #region repo method
+        private async Task AddOperationRecord(DeviceCreateDto deviceDto, OperationLogCreateDto operationDto)
+        {
+            var device = await DeviceRepo.GetViaLimsi(deviceDto.Limsi);
+            if (device is null)
+            {
+                var afterCreate = await DeviceRepo.Create(deviceDto);
+                operationDto.DeviceId = afterCreate!.Id;
+            }
+            else
+            {
+                if(!string.IsNullOrEmpty(deviceDto.Uri))
+                    await DeviceRepo.Update(new DeviceUpdateDto() { Uri = deviceDto.Uri, Id = device.Id});
+                var lastLog = (await OperationLogRepo.FindViaLimsi(deviceDto.Limsi)).MaxBy(o => o.OperationTime);
+                operationDto.DeviceId = device.Id;
+                var time = lastLog is null ? "null" : DateOnly.FromDateTime(lastLog.OperationTime).ToString();
+                await ShowInfo("上次烧入时间:" + time, NotifyType.Instant);
+            }
+            await OperationLogRepo.Create(operationDto);
+        }
+        #endregion
 
         public async void DealReply(string reply)
         {
