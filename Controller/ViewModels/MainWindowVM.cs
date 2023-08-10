@@ -502,13 +502,14 @@ namespace Controller.ViewModels
             await ShowInfo(reply, NotifyType.Instant);
         }
 
-        private async Task ShowInfo(string msg, NotifyType type)
+        private async Task ShowInfo(string msg, NotifyType? type)
         {
             InfoColor = type switch
             {
                 NotifyType.Exception => ColorIndex.Red,
                 NotifyType.State => ColorIndex.Green,
                 NotifyType.Instant => ColorIndex.White,
+                { } => ColorIndex.White,
                 _ => throw new ArgumentException("unexcepted notify type")
             };
             HelperInfo = new NotificationBuilder()

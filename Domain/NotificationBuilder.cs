@@ -19,13 +19,14 @@
             return this;
         }
 
-        public NotificationBuilder WithType(NotifyType type)
+        public NotificationBuilder WithType(NotifyType? type = null)
         {
             _type = type switch
             {
                 NotifyType.Exception => "[异常]",
                 NotifyType.State => "[状态]",
                 NotifyType.Instant => "[消息]",
+                { } => "[未知]",
                 _ => throw new ArgumentException("unexcepted notify type")
             };
             return this;
